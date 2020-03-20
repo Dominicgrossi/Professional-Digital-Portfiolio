@@ -1,0 +1,178 @@
+Sub Rapid_Roll()
+
+'Dice roller
+'
+    Dim Dice As Integer
+    Dim lowerbound As Integer, upperbound As Integer
+    Dim r As Integer
+    Dim w As Integer
+    Dim s As Integer
+    
+    
+    lowerbound = 1
+    upperbound = 6
+    
+Application.ScreenUpdating = False
+
+'Values. This used to be a message box
+
+    r = Range("L5").Value
+    
+'Clears previous run
+
+    Range("A2:A9001").Select
+    Selection.Clear
+    Range("C2:C9001").Select
+    Selection.Clear
+    Range("E2:E9001").Select
+    Selection.Clear
+    Range("L5").Select
+
+'Dice Rolls to hit
+    
+    For r = 2 To r + 1
+    Cells(r, 1).Value = Int((upperbound - lowerbound + 1) * Rnd + lowerbound)
+    Next r
+    
+
+
+'Reroll failed hits
+    If CheckBox3.Value = True Then
+    For r = 2 To r - 1
+    If Cells(r, 1).Value < Range("L2").Value Then
+    Cells(r, 1).Value = Int((upperbound - lowerbound + 1) * Rnd + lowerbound)
+    End If
+    Next r
+    End If
+    
+'Results for A1
+
+    Range("B2").Select
+    ActiveCell.FormulaR1C1 = "=IF(RC[-1]>=R2C12,""Hit"", """")"
+    Range("B2").Select
+    Selection.AutoFill Destination:=Range("B2:B9000")
+    
+'Reroll 1's to Hit
+    If CheckBox1.Value = True Then
+    For r = 2 To r + 1
+    If Cells(r, 1).Value = 1 Then
+    Cells(r, 1).Value = Int((upperbound - lowerbound + 1) * Rnd + lowerbound)
+    End If
+    Next r
+    End If
+   
+    
+'Dice Rolls to Wound
+
+    w = Range("I2")
+    
+    Range("C2").Select
+    For w = 2 To w + 1
+    Cells(w, 3).Value = Int((upperbound - lowerbound + 1) * Rnd + lowerbound)
+    Next w
+        
+'Reroll 1's to Wound
+    If CheckBox2.Value = True Then
+    For w = 2 To w + 1
+    If Cells(w, 3).Value = 1 Then
+    Cells(w, 3).Value = Int((upperbound - lowerbound + 1) * Rnd + lowerbound)
+    End If
+    Next w
+    End If
+    
+'Reroll Failed Wounds
+    If CheckBox4.Value = True Then
+    For w = 2 To w - 1
+    If Cells(w, 3).Value < Range("L3").Value Then
+    Cells(w, 3).Value = Int((upperbound - lowerbound + 1) * Rnd + lowerbound)
+    End If
+    Next w
+    End If
+    
+'Saves
+
+    s = Range("I3")
+    
+    Range("E2").Select
+    For s = 2 To s + 1
+    Cells(s, 5).Value = Int((upperbound - lowerbound + 1) * Rnd + lowerbound)
+    Next s
+    
+'Reroll Saves of 1
+    If CheckBox5.Value = True Then
+    For s = 2 To s + 1
+    If Cells(s, 5).Value = 1 Then
+    Cells(s, 5).Value = Int((upperbound - lowerbound + 1) * Rnd + lowerbound)
+    End If
+    Next s
+    End If
+    
+'Reroll failed saves
+    If CheckBox6.Value = True Then
+    For s = 2 To s - 1
+    If Cells(s, 5).Value < Range("L4").Value Then
+    Cells(s, 5).Value = Int((upperbound - lowerbound + 1) * Rnd + lowerbound)
+    End If
+    Next s
+    End If
+
+
+'Results
+    
+    Range("F2").Select
+    ActiveCell.FormulaR1C1 = "=IF(RC[-1]>=R4C12,""Save"", """")"
+    Range("F2").Select
+    Selection.AutoFill Destination:=Range("F2:F9000")
+    Range("L5").Select
+'recording
+Dim rec As Integer
+
+rec = 2
+
+Do Until Range("O" & rec) = ""
+If Range("O" & rec) <> "" Then
+rec = rec + 1
+End If
+Loop
+
+Range("O" & rec).Formula = Range("I5")
+
+Application.ScreenUpdating = True
+
+End Sub
+
+Sub Reset()
+
+'Cleans up dice roll cells
+
+Range("O2:O9001").Clear
+Range("A2:A9001").Clear
+Range("C2:C9001").Clear
+Range("E2:E9001").Clear
+Range("L5").Select
+
+End Sub
+
+Private Sub CheckBox1_Click()
+
+End Sub
+
+Private Sub CheckBox3_Click()
+
+End Sub
+
+Private Sub CheckBox4_Click()
+
+End Sub
+
+Private Sub CheckBox5_Click()
+
+End Sub
+
+Private Sub Ward_Click()
+
+End Sub
+
+Private Sub CheckBox7_Click()
+
+End Sub
