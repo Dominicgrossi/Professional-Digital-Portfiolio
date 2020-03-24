@@ -1,0 +1,183 @@
+Sub GenerateCallData()
+
+'This macro loops through Columns A, B, C and D to create random call center data. This is intended to simulate a random call center environment for the purposes of creating usable data
+
+On Error GoTo ErrorMsg:
+
+
+Application.ScreenUpdating = False
+
+'Generate Random Employee ID
+
+ Dim c As Range
+ Set c = Worksheets("Calls").Range("A2:A1001")
+ c.Formula = "=RANDOMSELECTION(EmployeeData!A$2:A$101)"
+ 
+ 'Fills random Employee IDS
+ 
+ Range("A2:A1001").Select
+ Selection.Copy
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    
+
+
+'Create Call Date and create Random Call Start Time
+   
+    Range("B2").Select
+    Range("B2") = "=$K$4"
+    Selection.AutoFill Destination:=Range("B2:B1001")
+    Range("B2:B1001").Select
+    Selection.Copy
+    Range("B2").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Application.CutCopyMode = False
+    Range("C2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=RANDBETWEEN(0,12)&"":""&RANDBETWEEN(0,6)&""""&RANDBETWEEN(0,9)&"":""&RANDBETWEEN(0,5)&""""&RANDBETWEEN(0,9)"
+    Range("C2").Select
+    Selection.AutoFill Destination:=Range("C2:C1001")
+    Range("C2:C1001").Select
+    Selection.Copy
+    Range("C2").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Range("C2").Select
+    Application.CutCopyMode = False
+
+'Create Random Call End Time
+
+    Range("D2:D1001") = "=C2+TIME(RANDBETWEEN(0,0),RANDBETWEEN(0,59),RANDBETWEEN(0,59))"
+    Range("D2:D1001").Select
+    Selection.Copy
+    Range("D2").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+    :=False, Transpose:=False
+    Range("D2").Select
+    
+    Range("C2:E1001").NumberFormat = "[h]:mm:ss;@"
+
+'Calculate Call Length
+    Range("E2:E1001") = "=D2-C2"
+    
+'Generate Temp Time Value in Cell G
+
+    Range("G2").Select
+    Application.CutCopyMode = False
+    ActiveCell.FormulaR1C1 = "=RC[-5]+RC[-4]"
+    Range("G2").Select
+    Selection.NumberFormat = "General"
+    Selection.AutoFill Destination:=Range("G2:G1001")
+    Range("G2:G1001").Select
+    Range("G2").Select
+    
+'Generate Unique Call IDs
+
+Dim ID As String
+
+    Range("B2").Select
+
+    Do Until IsEmpty(ActiveCell)
+        
+        
+        ID = "IC" & "-" & ActiveCell.Offset(0, 5).Value & "-" & ActiveCell.Offset(0, -1).Value
+        
+        If (ActiveCell.Value <> "") Then
+            ActiveCell.Offset(0, 4).Value = ID
+            ActiveCell.Offset(0, 4).NumberFormat = "General"
+            
+        End If
+        ActiveCell.Offset(1, 0).Select
+    Loop
+    
+'Clear Cell G
+
+Range("G1:G1001").Clear
+
+'Creates CallData Info
+
+    Sheets("Calls").Select
+    Range("F2").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Sheets("CallData").Select
+    Range("A2").PasteSpecial
+    Columns("A:A").EntireColumn.AutoFit
+    Range("B2").Select
+    Sheets("Calls").Select
+    Range("A2").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    Sheets("CallData").Select
+    ActiveSheet.Paste
+    Range("D2").Select
+    Application.CutCopyMode = False
+    ActiveCell.FormulaR1C1 = "=VLOOKUP(RC[-2],Calls!C[-3]:C[1],5,FALSE)"
+    Range("D2").Select
+    Selection.AutoFill Destination:=Range("D2:D1001")
+    Range("D2:D1001").Select
+    Selection.NumberFormat = "[$-x-systime]h:mm:ss AM/PM"
+    Selection.NumberFormat = "h:mm:ss;@"
+    Range("D2").Select
+    
+
+'Generates random Customer ID from CustomerData sheet
+
+    Set c = Worksheets("CallData").Range("C2:C1001")
+    c.Formula = "=RANDOMSELECTION(CustomerData!A$2:A$2177)"
+    
+ 
+'Generates Random value between -2 and 2 for products sold in column E
+    Sheets("CallData").Select
+    Range("E2:E1001") = "=RANDBETWEEN(-2,2)"
+
+'Copy/pastes values for columns C and E
+
+
+    Range("C2:C1001").Select
+    Selection.Copy
+    Range("C2").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Range("E2").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    Range("E972").Select
+    Selection.End(xlUp).Select
+    Range("E2").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Application.CutCopyMode = False
+    Range("A2").Select
+    
+'Returns view back to calls sheet
+    Sheets("Calls").Select
+    Range("G2").Select
+    
+MsgBox "Import from database complete"
+
+Exit Sub
+
+ErrorMsg:
+
+Sheets("Calls").Select
+
+Range("A2:A1001").Clear
+Range("B2:B1001").Clear
+Range("C2:C1001").Clear
+Range("D2:D1001").Clear
+Range("E2:E1001").Clear
+Range("F2:F1001").Clear
+Range("G2:G1001").Clear
+Range("K4").Select
+
+MsgBox "Error. Please review the date in cell K4. Proper format: mm/dd/yyyy"
+
+Exit Sub
+
+End Sub
+
+
