@@ -15,5 +15,3 @@ JOIN
 JOIN
     (AllCalls) A ON D.Call_ID = A.Call_ID
     ORDER BY D.Call_ID, E.Employee_First;
-
-SELECT * FROM ALLINTERACTIONS;
